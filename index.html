@@ -10,31 +10,47 @@
 Paste the text from the downloaded Panopto caption file into the first box below, press Reformat to strip out the timecodes and then Copy Reformatted Text to copy the plain captions for pasting into a file elsewhere.<br/><br/>
 Note: All processing is done locally in your browser and nothing is sent or stored anywhere. <br /><br />
 
-    <textarea id="myTextarea" rows="25" cols="150"></textarea><br/>
+<fieldset>
+	<legend>How did you get the caption text?</legend>
+	<div>
+		<input type="radio" id="sourceCopy" name="source" value="copied" /> 
+    	<label for="sourceCopy">Copied</label>
+    	<input type="radio" id="sourceDownload" name="source" value="downloaded" />
+    	<label for="sourceDownload">Downloaded</label> 
+    </div>
+</fieldset>
+    <textarea id="inputCaptions" rows="25" cols="150"></textarea><br/>
     <button onclick="extractText()">Reformat</button><br/><br/>
     <textarea id="result" rows="25" cols="150"></textarea>
     <button onclick="copyToClipboard()">Copy Reformatted Text</button>
 
-<script>
+    <script>
         function extractText() {
             // Get the text from the textarea
-            const text = document.getElementById('myTextarea').value;
+            const text = document.getElementById('inputCaptions').value;
             
             // Define the regular expression pattern
-	    const captionRegex = /^\d*$\n^\d\d.*\d\d$\n/gm
+            //const regex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+			if (document.getElementById("sourceCopy").checked) {
+			    captionRegex = /^\d*:\d*$\n/gm;
+			} else {
+				captionRegex = /^\d*$\n^\d\d.*\d\d$\n/gm;
+			};
             
             // Split the text by the matches
             const nonMatches = text.split(captionRegex).filter(Boolean);
 			
-	    const mergedLines = nonMatches.join('');
+			const mergedLines = nonMatches.join('');
 			
-	    // Merge into sentences
-	    const mergedSentences = mergedLines.split('.\n').filter(Boolean);
 			
-	    mergedSentences.forEach(function(item, index) {
-	    	  mergedSentences[index] = item.replace(/[\r\n]/gm, ' ').trim().replace('  ', ' ');
-	    });
+			// Merge into sentences
+			const mergedSentences = mergedLines.split('.\n').filter(Boolean);
 			
+			mergedSentences.forEach(function(item, index) {
+				mergedSentences[index] = item.replace(/[\r\n]/gm, ' ').trim().replace('  ', ' ');
+			});
+			
+            
             // Display the result
             document.getElementById('result').value = mergedSentences.join('.\n\n');
         }
