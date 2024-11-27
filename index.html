@@ -15,20 +15,28 @@ Note: All processing is done locally in your browser and nothing is sent or stor
     <textarea id="result" rows="25" cols="150"></textarea>
     <button onclick="copyToClipboard()">Copy Reformatted Text</button>
 
-    <script>
+<script>
         function extractText() {
             // Get the text from the textarea
             const text = document.getElementById('myTextarea').value;
             
             // Define the regular expression pattern
-            //const regex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
-			const regex = /^\d*$\n^\d\d.*\d\d$\n/gm
+	    const captionRegex = /^\d*$\n^\d\d.*\d\d$\n/gm
             
             // Split the text by the matches
-            const nonMatches = text.split(regex).filter(Boolean);
-            
+            const nonMatches = text.split(captionRegex).filter(Boolean);
+			
+	    const mergedLines = nonMatches.join('');
+			
+	    // Merge into sentences
+	    const mergedSentences = mergedLines.split('.\n').filter(Boolean);
+			
+	    mergedSentences.forEach(function(item, index) {
+	    	  mergedSentences[index] = item.replace(/[\r\n]/gm, ' ').trim().replace('  ', ' ');
+	    });
+			
             // Display the result
-            document.getElementById('result').value = nonMatches.join('');
+            document.getElementById('result').value = mergedSentences.join('.\n\n');
         }
 		
 
